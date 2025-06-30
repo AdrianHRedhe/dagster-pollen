@@ -32,13 +32,13 @@ certain values for PG and others for Telegram:
 ### Postgres .env values
 As long as you dont make any changes to the compose file,
 these values should work for postgres:
-`
-POSTGRES_DB=mydb
-POSTGRES_USER=myuser
-POSTGRES_PASSWORD=mypass
-POSTGRES_HOST=postgres
-POSTGRES_PORT=5432
-`
+```
+POSTGRES_DB=mydb  
+POSTGRES_USER=myuser  
+POSTGRES_PASSWORD=mypass  
+POSTGRES_HOST=postgres  
+POSTGRES_PORT=5432  
+```
 
 ### Telegram .env values
 For telegram you need to create an account and message
@@ -47,16 +47,16 @@ Then you can message your bot to start the conversation, you
 need to write the first message before a bot can contact
 you. You can then save the message id of your conversation
 with your bot. Once you have done this you can fill in the 
-following values in the .env file
-`
-TELEGRAM_BOT_TOKEN
-TELEGRAM_CHAT_ID
-`
+following values in the .env file  
+```
+TELEGRAM_BOT_TOKEN  
+TELEGRAM_CHAT_ID  
+```
 
 ### Running docker compose
 Once the .env file is filled in with those values in the
 root of the project, it is as simple as running the
-following command in the terminal
+following command in the terminal  
 `docker compose build && docker compose up`
 
 ### Checking in on runs
@@ -64,3 +64,22 @@ The program will automatically be running at 9 in the
 morning every day. You can go to localhost:3000 to check out
 dagster, upcoming runs, and also trigger runs manually if
 you want to.
+
+## Repo structure
+```
+.
+├── compose.yaml         -- Boots the docker image defined in dockerfile, as well as pg and pgadmin
+├── defs                 -- Contains all code for dagster to run
+│   ├── __init__.py
+│   ├── definitions.py   -- Contains definitions for dagster e.g. what jobs and schedules and resources to use
+│   ├── jobs.py          -- Contains jobs in this instance only one of them
+│   ├── operations.py    -- Contains smaller building blocks operations that make up jobs
+│   ├── resources.py     -- Contains resources that can be reused between operations such as connections to db
+│   └── schedules.py     -- Contains schedules for jobs
+├── Dockerfile           -- Defines docker file which downloads uv and runs dagster
+├── pyproject.toml       -- UV description of dependencies etc
+├── README.md            -- Describes purpose of repo and how to run
+├── tests                -- Contains pytest tests for dagster code
+├── uv.lock
+└── workspace.yaml       -- Describes entry point for dagster i.e. defs/definitions.py
+```
