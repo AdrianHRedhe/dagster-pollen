@@ -14,5 +14,4 @@ def pollen_job():
     data = store_in_db_op(data)
     data = create_scd2_view_op(data)
     new_events = find_new_scd2_events_op(data)
-    # temporarily commented, as it now works as expected
     send_telegram_message_op(new_events)

@@ -1,12 +1,15 @@
 import datetime
-import requests
-from bs4 import BeautifulSoup
 
+import requests
 from dagster import op
+from bs4 import BeautifulSoup
 
 
 @op(required_resource_keys={"telegram"})
 def send_telegram_message_op(context, new_events):
+    if not new_events:
+        context.log.info("no info to send to telegram. Ending task")
+        return
     event = new_events[0]
 
     message = (
@@ -14,7 +17,8 @@ def send_telegram_message_op(context, new_events):
         f"starting from {event['valid_from']}"
     )
     context.resources.telegram.send_message(message)
-    context.log.info("info sent to telegram")
+    context.log.info(f"info sent to telegram: {message}")
+    return
 
 
 @op(required_resource_keys={"postgres"})
