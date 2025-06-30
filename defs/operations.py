@@ -110,9 +110,10 @@ def create_scd2_view_op(context, data):
 @op(required_resource_keys={"postgres"})
 def find_new_scd2_events_op(context, data):
     engine = context.resources.postgres.engine
-    fetch_query = context.resources.postgres.execute_query
+    fetch_query = context.resources.postgres.fetch_query
 
     today = datetime.datetime.now(datetime.timezone.utc).date()
+    target_event = data["name"]
 
     query = """
         SELECT 
@@ -125,7 +126,7 @@ def find_new_scd2_events_op(context, data):
             AND event_name = :target_event
             AND is_current = TRUE;
     """
-    target_event = data["name"]
+
     new_events = fetch_query(
         engine, query, {"today": today, "target_event": target_event}
     )
