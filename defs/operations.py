@@ -145,38 +145,26 @@ def find_new_scd2_events_op(context, data):
 
 @op
 def fetch_data_op(context):
-    # Mock it up while debugging.
-    description = "Mycket höga halter"
-    params = {
-        "name": "pollen_level",
-        "value": description,
-        "time": datetime.datetime.now(datetime.timezone.utc),
-    }
-    return params
+    url = "https://pollenkoll.se/pollenprognos/stockholm/"
 
+    response = requests.get(url)
+    response.raise_for_status()  # error if page is broken
 
-# @op
-# def fetch_data_op(context):
-#     url = "https://pollenkoll.se/pollenprognos/stockholm/"
-#
-#     response = requests.get(url)
-#     response.raise_for_status()  # error if page is broken
-#
-#     soup = BeautifulSoup(response.text, "html.parser")
-#
-#     items = soup.find_all("div", class_="pollen-city__day active")
-#
-#     for item in items:
-#         description_div = item.find("div", class_="pollen-city__item-desc")
-#         name_div = item.find("div", class_="pollen-city__item-name")
-#
-#         description = description_div.get_text(strip=True) if description_div else None
-#         name = name_div.get_text(strip=True) if name_div else None
-#
-#         if name == "Gräs":
-#             params = {
-#                 "name": "pollen_level",
-#                 "value": description,
-#                 "time": datetime.datetime.now(datetime.timezone.utc),
-#             }
-#             return params
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    items = soup.find_all("div", class_="pollen-city__day active")
+
+    for item in items:
+        description_div = item.find("div", class_="pollen-city__item-desc")
+        name_div = item.find("div", class_="pollen-city__item-name")
+
+        description = description_div.get_text(strip=True) if description_div else None
+        name = name_div.get_text(strip=True) if name_div else None
+
+        if name == "Gräs":
+            params = {
+                "name": "pollen_level",
+                "value": description,
+                "time": datetime.datetime.now(datetime.timezone.utc),
+            }
+            return params
