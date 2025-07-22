@@ -152,7 +152,7 @@ def fetch_data_op(context):
 
     soup = BeautifulSoup(response.text, "html.parser")
 
-    items = soup.find_all("div", class_="pollen-city__day active")
+    items = soup.find_all("div", class_="pollen-city__item")
 
     for item in items:
         description_div = item.find("div", class_="pollen-city__item-desc")
